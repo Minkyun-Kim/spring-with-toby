@@ -2,10 +2,19 @@ package springbook.user.domain;
 
 import java.sql.*;
 
-public abstract class UserDao {
+/*
+해당 클래스에서는 Connection 부분의 변경이 더이상 필요하지 않다.
+Connection 부분을 공통으로 묶어 멤버변수로 할당했고 해당 변수에 들어갈 Connection Maker를 아래 클래스에서 직접 생성하는게 아니라 생성자를 통해 사용자가 원하는 Maker를 넣어 사용할 수 있도록 하였기 때문이다. 이렇게 필요에 따라 변경이 필요한 부분을 인터페이스로 외부로 분리시켜 사용하는 것을 전략 패턴이라고 한다.
+ */
+public class UserDao {
+    ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker){
+        this.connectionMaker = connectionMaker;
+    }
 
     public void add(User user) throws ClassNotFoundException, SQLException{
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "insert into users(id, name, password) values(?,?,?)");
@@ -20,7 +29,7 @@ public abstract class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException{
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
         ps.setString(1, id);
@@ -38,7 +47,4 @@ public abstract class UserDao {
 
         return user;
     }
-
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
-    //하나의 DB에 접근하기엔 적합하지만 다른 DB에 접근하려면 서로 다른 Connection이 필요하므로 각각의 Connection은 직접 구현할 수 있도록 bastract method로 추출한다.
 }
