@@ -1,0 +1,19 @@
+<!--아래 DOCTYPE 태그는 DTD를 이용해 beans 설정이 제대로 되었는지 검사하는 태그이다.-->
+<!--!DOCTYPE beans PUBLIC "-//SPRING/DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd"-->
+
+<!--아래 태그는 schema를 통해 beans외의 별도의 태그를 사용할 수 있는 방법을 제공한다.-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost/testdb"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+    <bean id="userDao" class="springbook.user.domain.UserDao">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
